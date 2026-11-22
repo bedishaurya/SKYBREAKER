@@ -4211,15 +4211,15 @@ export class SkybreakerEngine {
       ctx.restore();
     }
 
-    // 9. Circular Top-Down Archipelago Minimap (Adapts for mobile/tablet joystick clearance)
-    const isLandscapePhone = h < 520 && w < 960;
+    // 9. Circular Top-Down Archipelago Minimap (Adapts for lifted mobile/tablet joystick clearance)
+    const isLandscapePhone = h < 540 && w < 960;
     const isPortraitTouch = w < 960 && !isLandscapePhone;
-    const radarR = isLandscapePhone ? 36 : isPortraitTouch ? (w < 640 ? 40 : 48) : 68;
+    const radarR = isLandscapePhone ? 34 : isPortraitTouch ? (w < 640 ? 38 : 46) : 68;
     const radarX = isLandscapePhone ? 186 : radarR + (isPortraitTouch ? 16 : 24);
     const radarY = isLandscapePhone
-      ? h - radarR - 18
+      ? h - radarR - 64
       : isPortraitTouch
-        ? h - radarR - 178
+        ? h - radarR - 246
         : h - radarR - 22;
     this.renderMiniRadar(ctx, radarX, radarY, radarR);
   }

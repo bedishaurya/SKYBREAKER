@@ -137,7 +137,7 @@ export const GameHud: React.FC<GameHudProps> = ({
       {/* TOP BAR: Mission Header Left | Compass Tape Center | Sortie Pill + Utility Right */}
       <div className="flex items-start justify-between gap-2 sm:gap-4">
         {/* Top-Left: Slanted Crest + SKYBREAKER Title + Clean Gradient Objective Strip */}
-        <div className="flex flex-col items-start gap-1.5 sm:gap-2.5 max-w-[205px] sm:max-w-[360px]">
+        <div className="flex flex-col items-start gap-1.5 sm:gap-2.5 min-w-0 max-w-[56%] sm:max-w-[360px]">
           <div className="flex items-center gap-2 pl-0.5">
             <svg viewBox="0 0 36 30" className="w-6 h-5 sm:w-8 sm:h-7 text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] shrink-0" fill="currentColor">
               <path d="M18 3L21 12L35 7L24 17L26 26L18 20L10 26L12 17L1 7L15 12L18 3Z" />
@@ -246,71 +246,73 @@ export const GameHud: React.FC<GameHudProps> = ({
         </div>
 
         {/* Top-Center: Sleek Horizontal Compass Tape (desktop wide screens) + Contextual Threat / Boss Alerts */}
-        <div className="flex flex-col items-center gap-1.5 pt-0.5">
-          {!useMobileCompactHud && viewport.w >= 960 && viewport.h >= 520 && (
-            <div className="relative w-[360px] h-8 overflow-hidden">
-            {/* Soft edge fade mask */}
-            <div
-              className="absolute inset-x-0 top-2.5 h-[1px]"
-              style={{
-                background:
-                  'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.28) 25%, rgba(255,255,255,0.28) 75%, rgba(255,255,255,0) 100%)',
-              }}
-            />
-            {/* Center fixed gold needle */}
-            <div className="absolute left-1/2 -translate-x-1/2 top-0.5 w-[1.5px] h-3 bg-[#fbbf24]" />
-
-            {compassTicks.map((tick) => {
-              const fade = Math.max(0.08, 1 - Math.abs(tick.offsetPx) / 182);
-              const isNorth = tick.label === 'N';
-              return (
+        {!useMobileCompactHud && (
+          <div className="flex flex-col items-center gap-1.5 pt-0.5">
+            {viewport.w >= 960 && viewport.h >= 520 && (
+              <div className="relative w-[360px] h-8 overflow-hidden">
+                {/* Soft edge fade mask */}
                 <div
-                  key={tick.deg}
-                  className="absolute top-2.5 -translate-x-1/2 flex flex-col items-center"
-                  style={{ left: `calc(50% + ${tick.offsetPx}px)`, opacity: fade }}
-                >
-                  <div className={tick.major ? 'w-[1px] h-2 bg-white/55' : 'w-[1px] h-1.5 bg-white/28'} />
-                  {tick.label && (
-                    <span
-                      className={`text-[11px] font-mono-num tracking-wider mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] ${
-                        isNorth ? 'text-[#fbbf24] font-bold' : 'text-white/85 font-semibold'
-                      }`}
-                    >
-                      {tick.label}
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-            </div>
-          )}
-
-          {/* Contextual Boss HP Bar (only on M5) */}
-          {hud.bossName && (
-            <div className="w-44 sm:w-72 rounded-full border border-rose-500/60 bg-[#140a0e]/82 px-3 py-1">
-              <div className="flex justify-between text-[9px] sm:text-[10px] font-mono-num font-bold text-rose-300">
-                <span className="truncate">{hud.bossName}</span>
-                <span>{hud.bossHpPct}%</span>
-              </div>
-              <div className="h-1 bg-black/60 rounded-full mt-0.5 overflow-hidden">
-                <div
-                  className="h-full bg-rose-500 transition-all duration-150"
-                  style={{ width: `${hud.bossHpPct}%` }}
+                  className="absolute inset-x-0 top-2.5 h-[1px]"
+                  style={{
+                    background:
+                      'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.28) 25%, rgba(255,255,255,0.28) 75%, rgba(255,255,255,0) 100%)',
+                  }}
                 />
-              </div>
-            </div>
-          )}
+                {/* Center fixed gold needle */}
+                <div className="absolute left-1/2 -translate-x-1/2 top-0.5 w-[1.5px] h-3 bg-[#fbbf24]" />
 
-          {/* Contextual Incoming Missile Alert */}
-          {hud.incomingSam && (
-            <div className="px-3 py-1 rounded-full bg-rose-600/90 border border-rose-300/80 text-white font-display text-[10px] sm:text-[11px] font-bold tracking-[0.14em] whitespace-nowrap">
-              {useMobileCompactHud ? 'SAM INBOUND · TAP FLR' : 'MISSILE INBOUND · FLARES [F]'}
-            </div>
-          )}
-        </div>
+                {compassTicks.map((tick) => {
+                  const fade = Math.max(0.08, 1 - Math.abs(tick.offsetPx) / 182);
+                  const isNorth = tick.label === 'N';
+                  return (
+                    <div
+                      key={tick.deg}
+                      className="absolute top-2.5 -translate-x-1/2 flex flex-col items-center"
+                      style={{ left: `calc(50% + ${tick.offsetPx}px)`, opacity: fade }}
+                    >
+                      <div className={tick.major ? 'w-[1px] h-2 bg-white/55' : 'w-[1px] h-1.5 bg-white/28'} />
+                      {tick.label && (
+                        <span
+                          className={`text-[11px] font-mono-num tracking-wider mt-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)] ${
+                            isNorth ? 'text-[#fbbf24] font-bold' : 'text-white/85 font-semibold'
+                          }`}
+                        >
+                          {tick.label}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Contextual Boss HP Bar (only on M5) */}
+            {hud.bossName && (
+              <div className="w-44 sm:w-72 rounded-full border border-rose-500/60 bg-[#140a0e]/82 px-3 py-1">
+                <div className="flex justify-between text-[9px] sm:text-[10px] font-mono-num font-bold text-rose-300">
+                  <span className="truncate">{hud.bossName}</span>
+                  <span>{hud.bossHpPct}%</span>
+                </div>
+                <div className="h-1 bg-black/60 rounded-full mt-0.5 overflow-hidden">
+                  <div
+                    className="h-full bg-rose-500 transition-all duration-150"
+                    style={{ width: `${hud.bossHpPct}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Contextual Incoming Missile Alert */}
+            {hud.incomingSam && (
+              <div className="px-3 py-1 rounded-full bg-rose-600/90 border border-rose-300/80 text-white font-display text-[10px] sm:text-[11px] font-bold tracking-[0.14em] whitespace-nowrap">
+                MISSILE INBOUND · FLARES [F]
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Top-Right: Single Compact Progress Pill + Minimal Circular Audio/Pause Buttons */}
-        <div className="flex flex-col items-end gap-1.5">
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
           <div className="flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
             <div className="flex items-center gap-2 h-8 px-2.5 sm:px-3.5 rounded-full border border-white/16 bg-[#0b0f18]/78 text-[11px] sm:text-xs shadow-[0_4px_14px_rgba(0,0,0,0.35)]">
               {!useMobileCompactHud && (
@@ -571,11 +573,38 @@ export const GameHud: React.FC<GameHudProps> = ({
         </div>
       )}
 
-      {/* MOBILE / TOUCH FLIGHT CONTROLS (Auto on touch screens & mobile viewports, or forced ON via Pause menu) */}
+      {/* MOBILE ALERTS: Centered below top header so they never push Mute/Pause off-screen */}
+      {useMobileCompactHud && (hud.bossName || hud.incomingSam) && (
+        <div className="fixed top-12 left-1/2 -translate-x-1/2 z-15 pointer-events-none flex flex-col items-center gap-1">
+          {hud.bossName && (
+            <div className="w-48 rounded-full border border-rose-500/60 bg-[#140a0e]/86 px-3 py-1">
+              <div className="flex justify-between text-[9px] font-mono-num font-bold text-rose-300">
+                <span className="truncate">{hud.bossName}</span>
+                <span>{hud.bossHpPct}%</span>
+              </div>
+              <div className="h-1 bg-black/60 rounded-full mt-0.5 overflow-hidden">
+                <div
+                  className="h-full bg-rose-500 transition-all duration-150"
+                  style={{ width: `${hud.bossHpPct}%` }}
+                />
+              </div>
+            </div>
+          )}
+          {hud.incomingSam && (
+            <div className="px-3 py-0.5 rounded-full bg-rose-600/92 border border-rose-300/80 text-white font-display text-[10px] font-bold tracking-[0.14em] whitespace-nowrap">
+              SAM INBOUND · TAP FLR
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* MOBILE / TOUCH FLIGHT CONTROLS (Lifted cleanly above Netlify bottom drawer & system nav bars) */}
       {showTouchHud && (
         <div
           data-testid="mobile-touch-controls"
-          className="fixed inset-x-3.5 bottom-3.5 z-20 flex items-end justify-between pointer-events-none touch-none"
+          className={`fixed inset-x-3.5 z-20 flex items-end justify-between pointer-events-none touch-none ${
+            viewport.h < 540 ? 'bottom-14' : 'bottom-20'
+          }`}
         >
           {/* Left Thumb: 360° Analog Flight Stick + Drift/Strafe micro-button */}
           <div className="flex flex-col items-start gap-2 pointer-events-auto touch-none">
