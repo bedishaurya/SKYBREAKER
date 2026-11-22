@@ -508,7 +508,23 @@ export class SkybreakerEngine {
     this.resizeHudCanvas();
     this.bindEvents();
     this.lastFrameMs = performance.now();
-    this.tick();
+    const isCaptureMode =
+      typeof window !== 'undefined' &&
+      new URLSearchParams(window.location.search).get('capture') === '1';
+    if (isCaptureMode) {
+      const win = window as unknown as Record<string, unknown>;
+      win.__skybreakerStep = (dt = 1 / 30) => {
+        if (this.disposed) return;
+        this.stepScene(dt);
+        this.renderer.render(this.scene, this.camera);
+        this.renderHudCanvas();
+      };
+      this.stepScene(1 / 30);
+      this.renderer.render(this.scene, this.camera);
+      this.renderHudCanvas();
+    } else {
+      this.tick();
+    }
   }
 
   private buildSunsetEnvironment(pmrem: THREE.PMREMGenerator): THREE.Texture {
@@ -2428,7 +2444,7 @@ export class SkybreakerEngine {
 
     this.world.searchlights.forEach((sl, idx) => {
       if (sl.visible) {
-        sl.rotation.y = Math.sin(performance.now() * 0.0007 + idx * 2.1) * 1.1;
+        sl.rotation.y = Math.sin(this.elapsedSec * 0.7 + idx * 2.1) * 1.1;
       }
     });
 
@@ -4350,6 +4366,8 @@ export class SkybreakerEngine {
 
   public dispose(): void {
     this.disposed = true;
+    const win = window as unknown as Record<string, unknown>;
+    if (win.__skybreakerStep) delete win.__skybreakerStep;
     cancelAnimationFrame(this.frameId);
     clearTimeout(this.frameId);
     window.removeEventListener('keydown', this.onKeyDown);

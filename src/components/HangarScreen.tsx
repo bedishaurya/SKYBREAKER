@@ -309,10 +309,32 @@ export const HangarScreen: React.FC<HangarScreenProps> = ({
         </aside>
       </div>
 
-      {/* BOTTOM BAR: Clean 5-Pilot Roster + Selected Pilot Summary + Launch CTA */}
-      <footer className="relative z-10 shrink-0 px-5 sm:px-7 py-3 bg-[#070a11]/88 border-t border-white/10 pointer-events-auto flex flex-wrap items-center justify-between gap-4">
+      {/* CENTERED LAUNCH CTA: Positioned cleanly in horizontal center above footer, clear of corner overlays */}
+      <div className="relative z-10 shrink-0 flex justify-center px-5 pb-3 pointer-events-none">
+        <button
+          type="button"
+          data-start="true"
+          onClick={onLaunch}
+          className="pointer-events-auto px-8 py-3 rounded-xl bg-[#ff5a1f] hover:bg-[#ff733d] active:translate-y-px text-white transition-all cursor-pointer shrink-0 shadow-[0_10px_32px_rgba(255,90,31,0.45)] ring-1 ring-white/25 flex items-center gap-3.5"
+        >
+          <div className="text-left leading-tight">
+            <div className="font-display text-base font-extrabold tracking-wider uppercase whitespace-nowrap">
+              {launchLabel}
+            </div>
+            <div className="text-[11px] font-mono-num text-orange-100/95 whitespace-nowrap">
+              {launchSub}
+            </div>
+          </div>
+          <svg viewBox="0 0 16 16" className="w-4 h-4 fill-current shrink-0" aria-hidden="true">
+            <polygon points="3,2 14,8 3,14" />
+          </svg>
+        </button>
+      </div>
+
+      {/* BOTTOM BAR: Centered 5-Pilot Roster + Active Pilot Callout */}
+      <footer className="relative z-10 shrink-0 px-5 sm:px-7 py-3 bg-[#070a11]/88 border-t border-white/10 pointer-events-auto flex flex-wrap items-center justify-center gap-4">
         {/* 5 Pilot Tiles */}
-        <div className="flex items-center gap-2 overflow-x-auto" role="radiogroup" aria-label="Select Ace Pilot">
+        <div className="flex items-center gap-2 overflow-x-auto max-w-full" role="radiogroup" aria-label="Select Ace Pilot">
           {PILOTS.map((p) => {
             const active = selectedPilot === p.id;
             return (
@@ -349,39 +371,18 @@ export const HangarScreen: React.FC<HangarScreenProps> = ({
           })}
         </div>
 
-        {/* Concise Active Pilot Details + Launch Action */}
-        <div className="flex items-center gap-4 ml-auto">
-          <div className="hidden xl:flex flex-col text-right max-w-[300px]">
-            <div className="flex items-center justify-end gap-2 text-xs">
-              <span className="font-semibold text-white">{activePilot.name}</span>
-              <span className="text-slate-500" aria-hidden="true">·</span>
-              <span className="font-mono-num text-[11px] text-[#ff7847] font-bold">
-                {activePilot.ultimateLabel}
-              </span>
-            </div>
-            <div className="text-[11px] text-slate-400 truncate">
-              {activePilot.ultimateDesc}
-            </div>
+        {/* Concise Active Pilot Details */}
+        <div className="hidden xl:flex flex-col text-left max-w-[260px] pl-3 border-l border-white/10">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="font-semibold text-white">{activePilot.name}</span>
+            <span className="text-slate-500" aria-hidden="true">·</span>
+            <span className="font-mono-num text-[11px] text-[#ff7847] font-bold">
+              {activePilot.ultimateLabel}
+            </span>
           </div>
-
-          <button
-            type="button"
-            data-start="true"
-            onClick={onLaunch}
-            className="px-6 py-2.5 rounded-lg bg-[#ff5a1f] hover:bg-[#ff733d] active:translate-y-px text-white transition-colors cursor-pointer shrink-0 shadow-[0_6px_24px_rgba(255,90,31,0.35)] flex items-center gap-3"
-          >
-            <div className="text-left leading-tight">
-              <div className="font-display text-sm font-extrabold tracking-wider uppercase whitespace-nowrap">
-                {launchLabel}
-              </div>
-              <div className="text-[10px] font-mono-num text-orange-100/90 whitespace-nowrap">
-                {launchSub}
-              </div>
-            </div>
-            <svg viewBox="0 0 16 16" className="w-4 h-4 fill-current shrink-0" aria-hidden="true">
-              <polygon points="3,2 14,8 3,14" />
-            </svg>
-          </button>
+          <div className="text-[11px] text-slate-400 truncate">
+            {activePilot.ultimateDesc}
+          </div>
         </div>
       </footer>
     </div>
