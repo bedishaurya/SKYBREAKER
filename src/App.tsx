@@ -66,6 +66,7 @@ export default function App() {
   const [runSummary, setRunSummary] = useState<RunSummary | null>(null);
   const [showHelp, setShowHelp] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [touchMode, setTouchMode] = useState<'auto' | 'on' | 'off'>('auto');
 
   // Hangar selections
   const [selectedPilot, setSelectedPilot] = useState<PilotId>('valkyrie');
@@ -205,6 +206,7 @@ export default function App() {
           hud={hud}
           pilotId={selectedPilot}
           muted={muted}
+          touchMode={touchMode}
           onSwapAirframe={() => engineRef.current?.swapAirframe()}
           onCycleCamera={() => engineRef.current?.cycleCamera()}
           onCycleWeather={() => engineRef.current?.cycleWeather()}
@@ -220,9 +222,12 @@ export default function App() {
           onDropBomb={() => engineRef.current?.dropBomb()}
           onDeployFlares={() => engineRef.current?.deployFlares()}
           onActivateUlt={() => engineRef.current?.activateUltimate()}
+          onBarrelRoll={() => engineRef.current?.triggerBarrelRoll(1)}
           onTouchStick={(x, y) => engineRef.current?.setTouchStick(x, y)}
           onTouchFire={(a) => engineRef.current?.setTouchFire(a)}
           onTouchBoost={(a) => engineRef.current?.setTouchBoost(a)}
+          onTouchMissileHold={(a) => engineRef.current?.setTouchMissileHold(a)}
+          onTouchDrift={(a) => engineRef.current?.setTouchDrift(a)}
         />
       )}
 
@@ -232,6 +237,10 @@ export default function App() {
           missionLabel={hud.missionLabel}
           cameraMode={hud.cameraMode}
           weatherMood={hud.weatherMood}
+          touchMode={touchMode}
+          onCycleTouchMode={() =>
+            setTouchMode((m) => (m === 'auto' ? 'on' : m === 'on' ? 'off' : 'auto'))
+          }
           onResume={() => engineRef.current?.setPaused(false)}
           onRestart={() => launchCurrentSortie()}
           onHangar={() => engineRef.current?.returnToHangar()}

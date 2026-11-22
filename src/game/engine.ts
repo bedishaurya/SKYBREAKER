@@ -329,6 +329,7 @@ export class SkybreakerEngine {
   private touchMoveY = 0;
   private touchFiring = false;
   private touchBoosting = false;
+  private touchDrift = false;
 
   // Loop management
   private frameId = 0;
@@ -689,6 +690,7 @@ export class SkybreakerEngine {
     this.mouseRight = false;
     this.touchFiring = false;
     this.touchBoosting = false;
+    this.touchDrift = false;
     this.touchMoveX = 0;
     this.touchMoveY = 0;
     if (this.paintingMultiLock) {
@@ -953,7 +955,27 @@ export class SkybreakerEngine {
   }
 
   public setTouchBoost(active: boolean): void {
+    if (active) this.sound.unlock();
     this.touchBoosting = active;
+  }
+
+  public setTouchDrift(active: boolean): void {
+    this.touchDrift = active;
+  }
+
+  public setTouchMissileHold(active: boolean): void {
+    if (this.gameState !== 'playing') {
+      this.paintingMultiLock = false;
+      this.paintedLockIds = [];
+      return;
+    }
+    if (active) {
+      this.sound.unlock();
+      this.paintingMultiLock = true;
+      this.paintTimer = 0;
+    } else if (this.paintingMultiLock) {
+      this.releaseMissileSalvo();
+    }
   }
 
   public triggerMissileQuick(): void {
@@ -3010,7 +3032,7 @@ export class SkybreakerEngine {
     let pitch = this.touchMoveY;
     let throttle = 0;
     let boost = this.touchBoosting;
-    let driftOrStrafe = false;
+    let driftOrStrafe = this.touchDrift;
 
     if (this.keys.has('KeyA') || this.keys.has('ArrowLeft')) turn -= 1;
     if (this.keys.has('KeyD') || this.keys.has('ArrowRight')) turn += 1;
@@ -4189,10 +4211,16 @@ export class SkybreakerEngine {
       ctx.restore();
     }
 
-    // 9. Circular Top-Down Archipelago Minimap (Bottom-Left)
-    const radarR = w < 640 ? 54 : 68;
-    const radarX = radarR + (w < 640 ? 16 : 24);
-    const radarY = w < 768 ? h - radarR - 148 : h - radarR - 22;
+    // 9. Circular Top-Down Archipelago Minimap (Adapts for mobile/tablet joystick clearance)
+    const isLandscapePhone = h < 520 && w < 960;
+    const isPortraitTouch = w < 960 && !isLandscapePhone;
+    const radarR = isLandscapePhone ? 36 : isPortraitTouch ? (w < 640 ? 40 : 48) : 68;
+    const radarX = isLandscapePhone ? 186 : radarR + (isPortraitTouch ? 16 : 24);
+    const radarY = isLandscapePhone
+      ? h - radarR - 18
+      : isPortraitTouch
+        ? h - radarR - 178
+        : h - radarR - 22;
     this.renderMiniRadar(ctx, radarX, radarY, radarR);
   }
 

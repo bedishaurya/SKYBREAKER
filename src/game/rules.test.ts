@@ -9,6 +9,7 @@ import {
   computeAircraftImpactPhysics,
   computeCCIPImpact,
   computeRunRank,
+  computeVirtualStickAxis,
   evaluateMissionState,
   getChainDetonationTargets,
   getTerrainHeight,
@@ -291,5 +292,20 @@ test('afterburner telemetry scales blue-core plume, heat distortion, and fuselag
   assert.ok(ignited.heatStrength > 0.85 && cruise.heatStrength < 0.35, 'Heat distortion scales with afterburner power');
   assert.ok(ignited.lightIntensity > 18 && ignited.lightIntensity > cruise.lightIntensity * 3, 'Fuselage PointLight spill must flare brightly on boost');
 });
+
+test('virtual analog flight stick applies deadzone, circular clamp, and upward pitch climb', () => {
+  const dead = computeVirtualStickAxis(3, 3, 46, 0.12);
+  assert.equal(dead.turn, 0);
+  assert.equal(dead.pitch, 0);
+
+  const climbUp = computeVirtualStickAxis(0, -46, 46, 0.12);
+  assert.equal(climbUp.turn, 0);
+  assert.ok(climbUp.pitch > 0.99, 'Dragging stick upward should command full positive pitch');
+
+  const diag = computeVirtualStickAxis(100, -100, 46, 0.12);
+  assert.ok(Math.hypot(diag.turn, diag.pitch) <= 1.001, 'Diagonal stick must remain radially clamped inside unit circle');
+  assert.ok(Math.hypot(diag.knobX, diag.knobY) <= 46.01, 'Visual knob offset stays inside stick ring radius');
+});
+
 
 

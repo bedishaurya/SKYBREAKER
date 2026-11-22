@@ -6,6 +6,8 @@ interface PauseModalProps {
   missionLabel: string;
   cameraMode: CameraMode;
   weatherMood: WeatherMood;
+  touchMode: 'auto' | 'on' | 'off';
+  onCycleTouchMode: () => void;
   onResume: () => void;
   onRestart: () => void;
   onHangar: () => void;
@@ -18,6 +20,8 @@ export const PauseModal: React.FC<PauseModalProps> = ({
   missionLabel,
   cameraMode,
   weatherMood,
+  touchMode,
+  onCycleTouchMode,
   onResume,
   onRestart,
   onHangar,
@@ -28,6 +32,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
   const camLabel = cameraMode === 'chase' ? 'Chase' : cameraMode === 'topdown' ? 'Top' : 'FPV';
   const weatherLabel =
     weatherMood === 'sunset' ? 'Sunset' : weatherMood === 'storm' ? 'Storm' : 'Night';
+  const touchLabel = touchMode === 'auto' ? 'Auto' : touchMode === 'on' ? 'On' : 'Off';
 
   return (
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-[#05080f]/78 p-4">
@@ -44,7 +49,7 @@ export const PauseModal: React.FC<PauseModalProps> = ({
           Flight Paused
         </h2>
 
-        <div className="mt-5 grid grid-cols-3 gap-2">
+        <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2">
           <button
             type="button"
             onClick={onCycleCamera}
@@ -60,6 +65,14 @@ export const PauseModal: React.FC<PauseModalProps> = ({
           >
             <div className="text-[9px] text-slate-400">WEATHER [N]</div>
             <div className="font-bold text-white mt-0.5">{weatherLabel}</div>
+          </button>
+          <button
+            type="button"
+            onClick={onCycleTouchMode}
+            className="px-2 py-2 border border-white/12 bg-[#0f1522] hover:border-[#ff7847]/60 hover:bg-[#172033] text-slate-200 text-[11px] font-mono-num cursor-pointer transition-colors"
+          >
+            <div className="text-[9px] text-slate-400">TOUCH HUD</div>
+            <div className="font-bold text-[#38bdf8] mt-0.5">{touchLabel}</div>
           </button>
           <button
             type="button"
@@ -269,17 +282,30 @@ export const HelpModal: React.FC<HelpModalProps> = ({ onClose }) => {
 
         <div className="p-5 max-h-[60vh] overflow-y-auto text-xs text-slate-200 space-y-2.5">
           {tab === 'controls' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono-num">
-              <ControlRow keys="W / S / ↑ / ↓" desc="Pitch aircraft up or down" />
-              <ControlRow keys="A / D / ← / →" desc="Bank & turn (double-tap for Barrel Roll)" />
-              <ControlRow keys="LMB / Space" desc="Fire twin Vulcan cannons" />
-              <ControlRow keys="RMB / E" desc="Tap Homing Missile · Hold for 4× Multi-Lock" />
-              <ControlRow keys="B" desc="Drop CCIP ground/naval bomb" />
-              <ControlRow keys="Shift" desc="Afterburner Boost" />
-              <ControlRow keys="Z / Ctrl" desc="High-G Drift (Jet) / Lateral Strafe (Gunship)" />
-              <ControlRow keys="F / R" desc="Deploy Decoy Flares / Evasive Barrel Roll" />
-              <ControlRow keys="U / Q" desc="Trigger Pilot Signature Ultimate at 100%" />
-              <ControlRow keys="X / C / N" desc="Swap Jet↔Gunship · Camera · Weather Mood" />
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono-num">
+                <ControlRow keys="W / S / ↑ / ↓" desc="Pitch aircraft up or down" />
+                <ControlRow keys="A / D / ← / →" desc="Bank & turn (double-tap for Barrel Roll)" />
+                <ControlRow keys="LMB / Space" desc="Fire twin Vulcan cannons" />
+                <ControlRow keys="RMB / E" desc="Tap Homing Missile · Hold for 4× Multi-Lock" />
+                <ControlRow keys="B" desc="Drop CCIP ground/naval bomb" />
+                <ControlRow keys="Shift" desc="Afterburner Boost" />
+                <ControlRow keys="Z / Ctrl" desc="High-G Drift (Jet) / Lateral Strafe (Gunship)" />
+                <ControlRow keys="F / R" desc="Deploy Decoy Flares / Evasive Barrel Roll" />
+                <ControlRow keys="U / Q" desc="Trigger Pilot Signature Ultimate at 100%" />
+                <ControlRow keys="X / C / N" desc="Swap Jet↔Gunship · Camera · Weather Mood" />
+              </div>
+              <div className="border-t border-white/10 pt-2.5">
+                <div className="text-[10px] font-display font-bold tracking-wider text-[#38bdf8] uppercase mb-2">
+                  Mobile Touch Controls
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono-num">
+                  <ControlRow keys="Left Stick" desc="360° analog flight stick for pitch & bank steering" />
+                  <ControlRow keys="FIRE / AB" desc="Hold FIRE for Vulcan cannons · Hold AB for Afterburner" />
+                  <ControlRow keys="MSL" desc="Tap Homing Missile · Hold to paint 4× Multi-Lock" />
+                  <ControlRow keys="BOMB / FLR / ROLL / ULT / SWAP" desc="Drop bombs, flares, barrel roll, ultimate & airframe swap" />
+                </div>
+              </div>
             </div>
           ) : (
             <div className="space-y-2.5">

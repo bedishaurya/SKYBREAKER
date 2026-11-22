@@ -61,21 +61,25 @@ export const HangarScreen: React.FC<HangarScreenProps> = ({
       />
 
       {/* TOP BAR */}
-      <header className="relative z-10 shrink-0 flex items-center justify-between gap-4 px-5 sm:px-7 py-3 pointer-events-auto">
-        <div className="flex items-center gap-2.5 shrink-0">
-          <svg viewBox="0 0 40 32" className="w-7 h-5 shrink-0" aria-hidden="true">
+      <header className="relative z-10 shrink-0 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 px-4 sm:px-7 py-2.5 sm:py-3 pointer-events-auto">
+        <div className="flex items-center gap-2 shrink-0">
+          <svg viewBox="0 0 40 32" className="w-6 h-4.5 sm:w-7 sm:h-5 shrink-0" aria-hidden="true">
             <polygon
               points="20,1 39,21 31,23 24,16 24,29 30,31 10,31 16,29 16,16 9,23 1,21"
               fill="#ff5a1f"
             />
             <polygon points="20,6 24,15 16,15" fill="#fff7ed" />
           </svg>
-          <h1 className="font-display text-lg sm:text-xl font-extrabold tracking-[0.16em] text-white whitespace-nowrap">
+          <h1 className="font-display text-base sm:text-xl font-extrabold tracking-[0.16em] text-white whitespace-nowrap">
             SKYBREAKER
           </h1>
         </div>
 
-        <nav className="flex items-center gap-5 sm:gap-7" aria-label="Game Mode" role="tablist">
+        <nav
+          className="order-3 sm:order-none w-full sm:w-auto flex items-center justify-center gap-6 sm:gap-7 border-t border-white/10 pt-1.5 sm:border-0 sm:pt-0"
+          aria-label="Game Mode"
+          role="tablist"
+        >
           {(
             [
               { id: 'campaign', label: 'Campaign' },
@@ -105,7 +109,7 @@ export const HangarScreen: React.FC<HangarScreenProps> = ({
         <button
           type="button"
           onClick={onOpenHelp}
-          className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-100 border border-white/15 bg-[#0b101a]/80 hover:border-white/35 hover:bg-[#141c2b] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-100 border border-white/15 bg-[#0b101a]/80 hover:border-white/35 hover:bg-[#141c2b] transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
           Controls
         </button>

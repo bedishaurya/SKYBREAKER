@@ -944,4 +944,51 @@ export function computeAfterburnerTelemetry(input: {
   };
 }
 
+export interface VirtualStickOutput {
+  turn: number;
+  pitch: number;
+  knobX: number;
+  knobY: number;
+  magnitude: number;
+}
+
+/**
+ * Converts pointer pixel offsets relative to the virtual stick center into
+ * radially clamped, deadzone-filtered analog flight controls (-1..1).
+ * Upward drag (dyPx < 0) produces positive pitch climb (+1).
+ */
+export function computeVirtualStickAxis(
+  dxPx: number,
+  dyPx: number,
+  maxRadiusPx = 46,
+  deadzone = 0.12,
+): VirtualStickOutput {
+  const radius = Math.max(8, maxRadiusPx);
+  const dist = Math.hypot(dxPx, dyPx);
+  if (dist < 1e-4) {
+    return { turn: 0, pitch: 0, knobX: 0, knobY: 0, magnitude: 0 };
+  }
+
+  const clampedDist = Math.min(dist, radius);
+  const nx = dxPx / dist;
+  const ny = dyPx / dist;
+  const knobX = nx * clampedDist;
+  const knobY = ny * clampedDist;
+
+  const rawMag = clampedDist / radius;
+  if (rawMag <= deadzone) {
+    return { turn: 0, pitch: 0, knobX, knobY, magnitude: 0 };
+  }
+
+  const scaledMag = Math.min(1, (rawMag - deadzone) / Math.max(0.05, 1 - deadzone));
+  return {
+    turn: Math.max(-1, Math.min(1, nx * scaledMag)),
+    pitch: Math.max(-1, Math.min(1, -ny * scaledMag)),
+    knobX,
+    knobY,
+    magnitude: scaledMag,
+  };
+}
+
+
 
