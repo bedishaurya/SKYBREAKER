@@ -1,0 +1,6 @@
+{
+  "name": "SKYBREAKER — 3D Flight Combat",
+  "description": "3D retro-stylized fighter jet and attack gunship combat campaign across a destructible alpine harbour archipelago with 5 original ace pilots.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
